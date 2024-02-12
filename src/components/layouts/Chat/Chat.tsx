@@ -1,8 +1,8 @@
 'use client';
-import type {Timestamp } from 'firebase/firestore';
+import type { Timestamp } from 'firebase/firestore';
 import { addDoc, collection, doc, onSnapshot, orderBy, query, serverTimestamp } from 'firebase/firestore';
 import OpenAI from 'openai';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FaPaperPlane } from 'react-icons/fa';
 import LoadingIcons from 'react-loading-icons';
 
@@ -21,10 +21,11 @@ export const Chat = () => {
     apiKey: process.env.NEXT_PUBLIC_OPENAI_KEY,
     dangerouslyAllowBrowser: true,
   });
-  const { selectedRoom } = useAppContext();
+  const { selectedRoom, selectRoomName } = useAppContext();
   const [inputMessage, setInputMessage] = useState<string>('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const scrollDiv = useRef<HTMLDivElement>(null);
   //各Roomにおけるメッセージを取得
   useEffect(() => {
     if (selectedRoom) {
@@ -46,6 +47,16 @@ export const Chat = () => {
       fetchMessages();
     }
   }, [selectedRoom]);
+
+  useEffect(() => {
+    if (scrollDiv.current) {
+      const element = scrollDiv.current;
+      element.scrollTo({
+        top: element.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
+  }, [messages]);
   const sendMessage = async () => {
     if (!inputMessage.trim()) return;
     const messageData = {
@@ -76,8 +87,8 @@ export const Chat = () => {
   };
   return (
     <div className='bg-gray-500 h-full p-4 flex flex-col'>
-      <h1 className='text-2xl text-white font-semibold mb-4'>Room 1</h1>
-      <div className='flex-grow overflow-y-auto mb-4'>
+      <h1 className='text-2xl text-white font-semibold mb-4'>{selectRoomName}</h1>
+      <div className='flex-grow overflow-y-auto mb-4' ref={scrollDiv}>
         {messages.map((message, index) => (
           <div
             key={index}

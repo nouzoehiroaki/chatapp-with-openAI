@@ -1,7 +1,8 @@
 'use client';
-import type { User} from 'firebase/auth';
+import type { User } from 'firebase/auth';
 import { onAuthStateChanged } from 'firebase/auth';
-import type { ReactNode} from 'react';
+import { useRouter } from 'next/navigation';
+import type { ReactNode } from 'react';
 import { createContext, useContext, useEffect, useState } from 'react';
 
 import { auth } from '../../firebase';
@@ -35,11 +36,15 @@ export function AppProvider({ children }: AppProviderProps) {
   const [userId, setUserId] = useState<string | null>(null);
   const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
   const [selectRoomName, setSelectRoomName] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (newUser) => {
       setUser(newUser);
       setUserId(newUser ? newUser.uid : null);
+      if (!newUser) {
+        router.push('/auth/login');
+      }
     });
     return () => {
       unsubscribe();
