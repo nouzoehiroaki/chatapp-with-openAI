@@ -121,7 +121,6 @@ export const Chat = () => {
           value={inputMessage}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
-              e.preventDefault();
               sendMessage();
             }
           }}
