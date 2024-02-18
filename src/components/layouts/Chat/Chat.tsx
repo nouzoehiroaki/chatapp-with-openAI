@@ -21,7 +21,7 @@ export const Chat = () => {
     apiKey: process.env.NEXT_PUBLIC_OPENAI_KEY,
     dangerouslyAllowBrowser: true,
   });
-  const { selectedRoom, selectRoomName } = useAppContext();
+  const { selectedRoom, selectRoomName, setIsBlinking } = useAppContext();
   const [inputMessage, setInputMessage] = useState<string>('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -58,7 +58,12 @@ export const Chat = () => {
     }
   }, [messages]);
   const sendMessage = async () => {
-    if (!inputMessage.trim()) return;
+    if (!selectedRoom || !inputMessage.trim()) {
+      setIsBlinking(true);
+      alert('まずはRoomを作ってね。');
+      setInputMessage('');
+      return;
+    }
     const messageData = {
       text: inputMessage,
       sender: 'user',
@@ -116,6 +121,7 @@ export const Chat = () => {
           value={inputMessage}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
+              e.preventDefault();
               sendMessage();
             }
           }}

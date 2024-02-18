@@ -18,6 +18,9 @@ type AppContextType = {
   setSelectedRoom: React.Dispatch<React.SetStateAction<string | null>>;
   selectRoomName: string | null;
   setSelectRoomName: React.Dispatch<React.SetStateAction<string | null>>;
+
+  isBlinking: boolean;
+  setIsBlinking: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const defalutContextData = {
@@ -28,6 +31,9 @@ const defalutContextData = {
   setSelectedRoom: () => { },
   selectRoomName: null,
   setSelectRoomName: () => { },
+
+  isBlinking: false, // デフォルト値を追加
+  setIsBlinking: () => { }, // デフォルトの更新関数を追加
 };
 const AppContext = createContext<AppContextType>(defalutContextData);
 
@@ -36,6 +42,7 @@ export function AppProvider({ children }: AppProviderProps) {
   const [userId, setUserId] = useState<string | null>(null);
   const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
   const [selectRoomName, setSelectRoomName] = useState<string | null>(null);
+  const [isBlinking, setIsBlinking] = useState<boolean>(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -58,7 +65,9 @@ export function AppProvider({ children }: AppProviderProps) {
       selectedRoom,
       setSelectedRoom,
       selectRoomName,
-      setSelectRoomName
+      setSelectRoomName,
+      isBlinking,
+      setIsBlinking,
     }}>
     {children}
   </AppContext.Provider>;

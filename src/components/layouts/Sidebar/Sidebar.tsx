@@ -15,7 +15,7 @@ type Room = {
 }
 
 export const Sidebar = () => {
-  const { user, userId, setSelectedRoom, setSelectRoomName } = useAppContext();
+  const { user, userId, setSelectedRoom, setSelectRoomName, isBlinking, setIsBlinking } = useAppContext();
   const [rooms, setRooms] = useState<Room[]>([]);
   useEffect(() => {
     if (user) {
@@ -44,6 +44,7 @@ export const Sidebar = () => {
   const selectRoom = (roomId: string, roomName: string) => {
     setSelectedRoom(roomId);
     setSelectRoomName(roomName);
+    setIsBlinking(false);
   };
 
   const addNewRoom = async () => {
@@ -55,8 +56,10 @@ export const Sidebar = () => {
         userId: userId,
         createdAt: serverTimestamp(),
       });
+      setIsBlinking(false);
     }
   };
+
 
   const handleLogout = () => {
     auth.signOut();
@@ -66,7 +69,7 @@ export const Sidebar = () => {
       <div className='flex-grow'>
         <div
           onClick={addNewRoom}
-          className='cursor-pointer flex justify-evenly items-center border mt-2 rounded-md hover:bg-blue-800 duration-150'
+          className={`cursor-pointer flex justify-evenly items-center border mt-2 rounded-md hover:bg-blue-800 duration-150 ${isBlinking ? 'blink' : ''}`}
         >
           <span className='text-white p-4 text-2xl'>+</span>
           <h1 className='text-white text-xl font-semibold p-4'>New Chat</h1>
